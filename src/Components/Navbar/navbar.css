@@ -9,6 +9,7 @@
   justify-content: space-between;
   align-items: center;
   z-index: 100;
+
 }
 .logo {
   font-size: 1.5em;
@@ -38,4 +39,9 @@
 .navbar a:hover::before {
   visibility: visible;
   transform: scaleX(1);
+}
+
+body {
+  margin: 0;
+  padding-top: 80px; /* This value should be adjusted based on the height of your navbar */
 }
