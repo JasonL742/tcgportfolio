@@ -9,7 +9,7 @@ const Navbar = () => {
       <header className="header">
         <a href="/" className="logo">Logo</a>
         <nav className="navbar">
-          <a href = "/">Home</a>
+          <a href = "./Home">Home</a>
           <a href = "/">About</a>
           <Link to="./signin">Login/Sign-up</Link>
           </nav>
