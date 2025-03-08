@@ -3,7 +3,13 @@ import './navbar.css';
 
 const Navbar = () => {  
     return (
-      <div>Navbar</div>
+      <header className="header">
+        <a href="/" className="logo">Logo</a>
+        <nav className="navbar"></nav>
+          <a href = "/">Home</a>
+          <a href = "/">About</a>
+          <a href = "/">Login/Sign-up</a>
+      </header>
     )
 }
 export default Navbar;
