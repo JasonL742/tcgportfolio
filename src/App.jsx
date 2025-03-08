@@ -6,7 +6,7 @@ import Folderpage from './folderpage.jsx';
 const App = () => {
   return (
     <Routes>
-       <Route path="/Home" element={<Home />} />
+       <Route path="/" element={<Home />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/folderpage" element={<Folderpage />} />
     </Routes>
