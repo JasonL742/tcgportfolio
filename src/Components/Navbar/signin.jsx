@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { auth, provider } from '../../../firebase';
+import { auth, provider } from '../../../firebase';  // Make sure to import your firebase config
 import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
-function signin() {
+
+function Signin() {
   const [user, setUser] = useState(null);
 
+  // This effect will run when the component mounts and will listen for auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, setUser);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    // Clean up the listener when the component unmounts
     return () => unsubscribe();
   }, []);
 
@@ -22,29 +27,28 @@ function signin() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      setUser(null);
+      setUser(null);  // Reset the user when logged out
     } catch (error) {
       console.error('Error during logout: ', error);
     }
   };
 
   return (
-   
     <div>
-    <h1>Signin Page</h1>
-    {user ? (
-      <div>
-        <h2>Welcome, {user.displayName}</h2>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-    ) : (
-      <div>
-        <p>Please log in to continue.</p>
-        <button onClick={handleLogin}>Login with Google</button>
-      </div>
-    )}
-  </div>
+      <h1>Signin Page</h1>
+      {user ? (
+        <div>
+          <h2>Welcome, {user.displayName}</h2>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      ) : (
+        <div>
+          <p>Please log in to continue.</p>
+          <button onClick={handleLogin}>Login with Google</button>
+        </div>
+      )}
+    </div>
   );
 }
 
-export default signin;
+export default Signin;
