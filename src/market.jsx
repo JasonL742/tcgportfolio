@@ -1,12 +1,12 @@
 import React, { useEffect, useContext, useState } from 'react'; 
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { db, storage } from '../firebase'; // Import Firestore and Storage
 import { doc, setDoc, collection } from 'firebase/firestore'; // Firestore functions
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Storage functions
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'; // Storage functions
 import './market.css';
 import { UserContext } from './UserContext';
-
+import { ToastContainer, toast } from 'react-toastify';
 const API_URL = "https://api.pokemontcg.io/v2/cards";
 const API_KEY = import.meta.env.VITE_Poke_Key; // Replace with your actual API key
 const API_KEY_GPT =  import.meta.env.VITE_GPT_Api_Key
@@ -75,10 +75,12 @@ const Market = () => {
         rarity: card.rarity || "Unknown",
         image: card.images.small,
         number: card.number,
-        priceAdded: card.tcgplayer.prices,
+        priceAdded: card.cardmarket.prices.avg1,
+        dateAdded: card.tcgplayer.updatedAt,
       });
 
       console.log(`Card ${card.name} added to folder ${id}`);
+      toast.success(`Card ${card.name} added to folder ${id}`);
     } catch (err) {
       console.error("Error adding card to folder:", err);
     }
@@ -105,7 +107,17 @@ const Market = () => {
       }
     }
   };
-
+  const deleteImage = async (imageUrl) => {
+    try {
+      // Get the reference for the image in Firebase Storage using its path
+      const imageRef = ref(storage, imageUrl);
+      // Delete the image
+      await deleteObject(imageRef);
+      console.log("Image deleted successfully.");
+    } catch (err) {
+      console.error("Error deleting image:", err);
+    }
+  };
   // Get image description and update the query
   const getImageDescription = async () => {
    
@@ -144,6 +156,7 @@ const Market = () => {
         setQuery(name); // Set the name to the search query
         setCardNumber(number); // Set the number to the cardNumber state
         console.log("Image description extracted:", description);
+        deleteImage(image);
       }
     } catch (error) {
       console.error("Error making API request", error);
@@ -153,6 +166,7 @@ const Market = () => {
   
   return (
     <div className="market-container">
+       <ToastContainer />
       <div className="market-body">
         <div className='searchbar'>
           <h1>Pokémon TCG Market</h1>
@@ -172,6 +186,9 @@ const Market = () => {
               placeholder="Card number (optional)"
             />
             <button onClick={() => fetchCards(query, cardNumber)}>Search</button>
+            <Link to={`/folderpage/${id}`}>
+                    <button className="button">Done</button>
+                  </Link>
           </div>
           {/* 🖼️ Upload Image Button */}
           <div>
@@ -195,6 +212,7 @@ const Market = () => {
                 <p>Rarity: {card.rarity || "Unknown"}</p>
                 {/* Button to add card to the folder */}
                 <button onClick={() => addCardToFolder(card)}>Add to Folder</button>
+
               </div>
             ))
           ) : (
