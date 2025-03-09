@@ -17,7 +17,7 @@ const Market = () => {
     try {
       const response = await axios.get(API_URL, {
         headers: { "X-Api-Key": API_KEY },
-        params: { q: `name:${searchTerm}`, pageSize: 10 },
+        params: { q: `number:${searchTerm}`, pageSize: 10 },
       });
 
       if (response.data && response.data.data) {
