@@ -10,7 +10,6 @@ const Navbar = () => {
         <a href="/" className="logo">Home</a>
         <nav className="navbar">
           <Link to="./signin">Login/Sign-up</Link>
-          <Link to="./market">Market</Link>
           </nav>
       </header>
       </div>
