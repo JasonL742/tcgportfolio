@@ -8,9 +8,6 @@ import './folder.css'; // Import custom CSS file
 const folderpage = () => {
   const { user } = useContext(UserContext); // Get user from context
   const [cards, setCards] = useState([]); // User's card collection state
-  const [cardName, setCardName] = useState(''); // Input for card name
-  const [cardRarity, setCardRarity] = useState(''); // Input for card rarity
-  const [cardImage, setCardImage] = useState(''); // Input for card image URL
   const { id: folderId } = useParams(); // Folder id from URL
   const [loading, setLoading] = useState(true); 
   const userId = user ? user.uid : null; // Use userId if user exists
@@ -36,28 +33,6 @@ const folderpage = () => {
 
     fetchCards();
   }, [folderId, userId]); // Re-fetch when folderId or userId changes
-
-  // Handle adding a new card to the collection
-  const addCard = async () => {
-    if (cardName && cardRarity && cardImage) {
-      try {
-        const newCard = {
-          name: cardName,
-          rarity: cardRarity,
-          image: cardImage
-        };
-        const cardsCollection = collection(db, `users/${userId}/folders/${folderId}/cards`);
-        const docRef = await addDoc(cardsCollection, newCard);
-        setCards([ ...cards, { id: docRef.id, ...newCard } ]);
-        // Reset input fields
-        setCardName('');
-        setCardRarity('');
-        setCardImage('');
-      } catch (error) {
-        console.error("Error adding card: ", error);
-      }
-    }
-  };
 
   // Handle removing a card from the collection
   const removeCard = async (id) => {

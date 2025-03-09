@@ -1,23 +1,26 @@
 import React, { useEffect, useContext, useState } from 'react'; 
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { db } from '../firebase'; // Import Firestore
+import { db, storage } from '../firebase'; // Import Firestore and Storage
 import { doc, setDoc, collection } from 'firebase/firestore'; // Firestore functions
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Storage functions
 import './market.css';
 import { UserContext } from './UserContext';
 
 const API_URL = "https://api.pokemontcg.io/v2/cards";
 const API_KEY = import.meta.env.VITE_Poke_Key; // Replace with your actual API key
-
+const API_KEY_GPT =  import.meta.env.VITE_GPT_Api_Key
 const Market = () => {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("pikachu");
   const [cardNumber, setCardNumber] = useState(""); // For optional card number
+  const [image, setImage] = useState(null); // For storing selected image
   const { id } = useParams(); // Get the folder ID from the URL
   const { user } = useContext(UserContext); 
   const userId = user ? user.uid : null;
+
   const fetchCards = async (searchTerm, cardNumber = "") => {
     setLoading(true);
     setError("");
@@ -72,6 +75,7 @@ const Market = () => {
         rarity: card.rarity || "Unknown",
         image: card.images.small,
         number: card.number,
+        priceAdded: card.tcgplayer.prices,
       });
 
       console.log(`Card ${card.name} added to folder ${id}`);
@@ -80,6 +84,73 @@ const Market = () => {
     }
   };
 
+  // Handle image upload
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imagePath = `images/${file.name}`;
+      const imageRef = ref(storage, imagePath);
+
+      try {
+        // Upload the image to Firebase Storage
+        await uploadBytes(imageRef, file);
+        // Get the image URL after upload
+        const imageUrl = await getDownloadURL(imageRef);
+        // Set the image URL to the search query
+        setImage(imageUrl); // Store image URL for description extraction
+        console.log("Image uploaded successfully, URL:", imageUrl);
+
+      } catch (err) {
+        console.error("Error uploading image:", err);
+      }
+    }
+  };
+
+  // Get image description and update the query
+  const getImageDescription = async () => {
+   
+    try {
+      const response = await axios.post(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "user",
+              content: [
+                { type: "text", text: "return the name of the pokemon on top and the number on the bottom before the /. Don't say anything else except the name and number with a space in between" },
+                {
+                  type: "image_url",
+                  image_url: {
+                    url: image,
+                  },
+                },
+              ],
+            },
+          ],
+          store: true,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${API_KEY_GPT}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+  
+      const description = response.data.choices[0]?.message.content;
+      if (description) {
+        const [name, number] = description.split(" ");
+        setQuery(name); // Set the name to the search query
+        setCardNumber(number); // Set the number to the cardNumber state
+        console.log("Image description extracted:", description);
+      }
+    } catch (error) {
+      console.error("Error making API request", error);
+    }
+  };
+
+  
   return (
     <div className="market-container">
       <div className="market-body">
@@ -101,6 +172,12 @@ const Market = () => {
               placeholder="Card number (optional)"
             />
             <button onClick={() => fetchCards(query, cardNumber)}>Search</button>
+          </div>
+          {/* 🖼️ Upload Image Button */}
+          <div>
+        
+            <input type="file" onChange={handleImageUpload} />
+            <button onClick={getImageDescription}>Submit</button>
           </div>
         </div>
 

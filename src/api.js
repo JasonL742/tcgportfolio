@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const APIKey = process.env.REACT_APP_Poke_Key;
+const APIKey = import.meta.env.VITE_Poke_Key;
 const BASE_URL = "https://api.pokemontcg.io/v2";
 
 
@@ -8,7 +8,7 @@ export const fetchPokemonCards = async (query) => {
   try {
     const response = await axios.get(`${BASE_URL}/cards`, {
       headers: { "X-Api-Key": APIKey },
-      params: { q: `name:${query}` },
+      params: { q: `id:${query}` },
     });
     return response.data.data; // The API returns data in a nested object
   } catch (error) {
