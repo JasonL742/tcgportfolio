@@ -5,7 +5,7 @@
   background-image: url('pkm2.jpg');
   background-repeat: repeat;
   background-size: 100%;
-  height: 675px;
+  height: 100vh;
 }
 
 .welcome-message {
