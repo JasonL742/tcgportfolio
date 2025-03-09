@@ -23,23 +23,27 @@ const Market = () => {
   }, []);
 
   return (
-    <nav className="navbar">
-      <ul className="navbar-menu">
-        <li className="navbar-item">
-          <Link to="/market" className="navbar-link">Market</Link>
-        </li>
-        {/* Add more navbar items here */}
-      </ul>
-      <div className="market-items">
-        {items.map(item => (
-          <div key={item.itemId} className="market-item">
-            <h3>{item.title}</h3>
-            <img src={item.image.imageUrl} alt={item.title} />
-            <p>{item.price.value} {item.price.currency}</p>
-          </div>
-        ))}
+    <div className="market-container">
+      <nav className="navbar">
+        <ul className="navbar-menu">
+          <li className="navbar-item">
+            <Link to="/market" className="navbar-link">Market</Link>
+          </li>
+          {/* Add more navbar items here */}
+        </ul>
+      </nav>
+      <div className="market-body">
+        <div className="market-items">
+          {items.map(item => (
+            <div key={item.itemId} className="market-item">
+              <h3>{item.title}</h3>
+              <img src={item.image.imageUrl} alt={item.title} />
+              <p>{item.price.value} {item.price.currency}</p>
+            </div>
+          ))}
+        </div>
       </div>
-    </nav>
+    </div>
   );
 };
 
