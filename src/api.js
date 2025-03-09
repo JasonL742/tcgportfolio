@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const APIKey = "72283e5f-3b89-4b20-8ddf-8ab81b2a01d4";
+const APIKey = process.env.REACT_APP_Poke_Key;
 const BASE_URL = "https://api.pokemontcg.io/v2";
 
 
