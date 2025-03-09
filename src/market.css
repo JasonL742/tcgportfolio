@@ -44,7 +44,7 @@
   padding-right: 200px;
 }
 
-/* 🎴 Individual Card */
+/*Individual Card */
 .market-item {
   background: #fff;
   padding: 15px;
@@ -58,7 +58,7 @@
   transform: scale(1.05);
 }
 
-/* 🖼️ Card Image */
+/*Card Image */
 .market-item img {
   max-width: 100%;
   height: auto;

@@ -75,7 +75,7 @@ const HomePage = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h3>Welcome, {user.displayName}</h3>
+      <h3 style = {{color : '#9c27b0' ,fontSize:'40px'}}>Welcome, {user.displayName}</h3>
       <Grid container spacing={2}>
         {/* First card is a plus card to add a new folder */}
         <Grid item xs={12} sm={6} md={4}>

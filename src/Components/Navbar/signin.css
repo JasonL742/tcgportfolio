@@ -1,0 +1,50 @@
+.signin-container {
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url('../../assets/pkm.jpg'); 
+  background-size: cover;
+  background-position: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+h2{
+  font-size: 2rem;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+button {
+  background-color: #a0abb6;
+  color: rgb(48, 47, 47);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+button:hover {
+  background-color: #84888b;
+}
+
+p {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
