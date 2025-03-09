@@ -5,13 +5,14 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter} from 'react-router-dom'; 
 import Navbar from './Components/Navbar/navbar.jsx'
-import Hme from './Home.jsx'
+import { UserProvider } from './UserContext.jsx'; // Import UserProvider
 createRoot(document.getElementById('root')).render(
 <BrowserRouter basename="/">
  <StrictMode>
+ <UserProvider>
     <App />
     <Navbar/>
-
+    </UserProvider>
   </StrictMode>
   </BrowserRouter>
 );
