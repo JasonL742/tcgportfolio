@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './market.css';
 import axios from 'axios';
+import pokemon from 'pokemontcgsdk'
+
+pokemon.configure({apiKey: '72283e5f-3b89-4b20-8ddf-8ab81b2a01d4'})
 
 const Market = () => {
   const [items, setItems] = useState([]);
