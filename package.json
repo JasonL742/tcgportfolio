@@ -16,6 +16,7 @@
     "@mui/material": "^6.4.7",
     "axios": "^1.8.2",
     "firebase": "^11.4.0",
+    "pokemontcgsdk": "^2.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.30.0",
