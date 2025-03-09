@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'; 
 import axios from 'axios';
-
+import './market.css'
 const API_URL = "https://api.pokemontcg.io/v2/cards";
 const API_KEY = "72283e5f-3b89-4b20-8ddf-8ab81b2a01d4"; // Replace with your actual API key
 
@@ -9,15 +9,24 @@ const Market = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("pikachu");
+  const [cardNumber, setCardNumber] = useState(""); // For optional card number
 
-  const fetchCards = async (searchTerm) => {
+  const fetchCards = async (searchTerm, cardNumber = "") => {
     setLoading(true);
     setError("");
+
+    // Build the query for a broad name search
+    let query = `name:${searchTerm}`;
+
+    if (cardNumber) {
+      // Only append the number if it's provided (exact match)
+      query += ` number:${cardNumber}`;
+    }
 
     try {
       const response = await axios.get(API_URL, {
         headers: { "X-Api-Key": API_KEY },
-        params: { q: `name:${searchTerm}`, pageSize: 10 },
+        params: { q: query, pageSize: 10 },
       });
 
       if (response.data && response.data.data) {
@@ -37,8 +46,8 @@ const Market = () => {
 
   // Fetch cards on first load
   useEffect(() => {
-    fetchCards(query);
-  }, []);
+    fetchCards(query, cardNumber);
+  }, [query, cardNumber]);  // Re-fetch when query or cardNumber changes
 
   return (
     <div className="market-container">
@@ -53,7 +62,13 @@ const Market = () => {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search for a Pokémon..."
           />
-          <button onClick={() => fetchCards(query)}>Search</button>
+          <input
+            type="text"
+            value={cardNumber}
+            onChange={(e) => setCardNumber(e.target.value)}
+            placeholder="Card number (optional)"
+          />
+          <button onClick={() => fetchCards(query, cardNumber)}>Search</button>
         </div>
 
         {loading && <p>Loading cards...</p>}
@@ -80,4 +95,3 @@ const Market = () => {
 };
 
 export default Market;
-
