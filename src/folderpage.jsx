@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Grid, Card, CardContent, Typography, Button, TextField } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';  // To generate unique card IDs
+import { useParams } from 'react-router-dom';
+
 
 const folderpage = () => {
   const [cards, setCards] = useState([]); // User's card collection state
   const [cardName, setCardName] = useState(''); // Input for card name
   const [cardRarity, setCardRarity] = useState(''); // Input for card rarity
   const [cardImage, setCardImage] = useState(''); // Input for card image URL
-
+  const { id } = useParams();//id from url
   // Handle adding a new card to the collection
   const addCard = () => {
     if (cardName && cardRarity && cardImage) {
