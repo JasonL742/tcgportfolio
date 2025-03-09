@@ -86,6 +86,14 @@ const FolderPage = () => {
       <Typography variant="h3" gutterBottom>
         My TCG Card Collection
       </Typography>
+         {/* Button linking to the market page with the id passed as part of the URL */}
+         <div style={{ margin: '20px' }}>
+        <Link to={`/market/${folderId}`}>
+          <Button variant="contained" color="primary">
+            Go to Market
+          </Button>
+        </Link>
+      </div>
 
       <Grid container spacing={2}>
         {/* Map over the cards array and render each card */}
@@ -128,14 +136,7 @@ const FolderPage = () => {
         ))}
       </Grid>
 
-      {/* Button linking to the market page with the id passed as part of the URL */}
-      <div style={{ marginTop: '20px' }}>
-        <Link to={`/market/${folderId}`}>
-          <Button variant="contained" color="primary">
-            Go to Market
-          </Button>
-        </Link>
-      </div>
+   
     </div>
   );
 };

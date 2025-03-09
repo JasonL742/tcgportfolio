@@ -1,12 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Grid, Card, CardContent, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { UserContext } from './UserContext';  // Import the UserContext
 import { db } from '../firebase'; // Import Firestore
 import { collection, addDoc, getDocs, query } from "firebase/firestore";
 import { useNavigate } from 'react-router-dom';  // Import useNavigate for navigation
+import './home.css';  // Import custom CSS file
 
-const HomePage = () => {
+const Home = () => {
   const { user } = useContext(UserContext);  // Consume the user from context
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);  // Add loading state
@@ -59,77 +58,44 @@ const HomePage = () => {
     navigate(`/folderpage/${id}`);  // Navigate to the FolderPage with the folder ID
   };
 
+  // Show a loading message while folders are being fetched
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
+
   // If no user is logged in, display login message
   if (!user) {
     return (
-      <div>
+      <div className="login-message">
         <h2>Please log in to view your home page</h2>
       </div>
     );
   }
 
-  // Show a loading message while folders are being fetched
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div style={{ padding: '20px' }}>
-      <h3 style = {{color : '#9c27b0' ,fontSize:'40px'}}>Welcome, {user.displayName}</h3>
-      <Grid container spacing={2}>
+    <div className="home-container">
+      <h3 className="welcome-message">Welcome, {user.displayName}</h3>
+      <div className="grid-container">
         {/* First card is a plus card to add a new folder */}
-        <Grid item xs={12} sm={6} md={4}>
-          <Card
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '200px',
-              width: '200px',
-              cursor: 'pointer',
-            }}
-            onClick={addCard}  // Trigger addCard on click
-          >
-            <CardContent>
-              <Typography variant="h5" color="primary">
-                <AddIcon style={{ fontSize: '50px' }} />
-              </Typography>
-              <Typography variant="h6" color="primary">
-                Add New Folder
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <div className="card add-card" onClick={addCard}>
+          <div className="card-content">
+            <span className="add-icon">+</span>
+            <h6>Add New Folder</h6>
+          </div>
+        </div>
 
         {/* Dynamically generated folder cards */}
         {cards.map((card) => (
-          <Grid item xs={12} sm={6} md={4} key={card.id}>
-            <Card
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '200px',
-                width: '250px',
-                cursor: 'pointer',
-              }}
-              onClick={() => handleCardClick(card.id)}  // Navigate to the folder page on click
-            >
-              <CardContent style={{
-                overflow: 'auto',
-                maxHeight: '200px',
-                wordWrap: 'break-word',
-                maxWidth: '200px'
-              }}>
-                <Typography variant="h5">Folder {card.id}</Typography>
-                <Typography variant="body1">{card.content}</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+          <div className="card" key={card.id} onClick={() => handleCardClick(card.id)}>
+            <div className="card-content">
+              <h5>Folder {card.id}</h5>
+              <p>{card.content}</p>
+            </div>
+          </div>
         ))}
-      </Grid>
+      </div>
     </div>
   );
 };
 
-export default HomePage;
+export default Home;
