@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';  // Import useNavigate for navig
 const HomePage = () => {
   const { user } = useContext(UserContext);  // Consume the user from context
   const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);  // Add loading state
   const navigate = useNavigate();  // Initialize navigate for routing
 
   // Fetch folders when the user changes
@@ -20,12 +21,14 @@ const HomePage = () => {
         const querySnapshot = await getDocs(q);
         const fetchedCards = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setCards(fetchedCards);
+        setLoading(false);  // Set loading to false once data is fetched
       }
     };
 
-    // Always run this effect to fetch folders when the user is logged in
-    fetchFolders();
-  }, [user]);
+    if (user) {
+      fetchFolders();  // Fetch folders only when the user is logged in
+    }
+  }, [user]);  // Run this effect when the user changes
 
   // Function to add a new folder
   const addCard = async () => {
@@ -65,6 +68,11 @@ const HomePage = () => {
     );
   }
 
+  // Show a loading message while folders are being fetched
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div style={{ padding: '20px' }}>
       <h3>Welcome, {user.displayName}</h3>
@@ -96,7 +104,7 @@ const HomePage = () => {
         {/* Dynamically generated folder cards */}
         {cards.map((card) => (
           <Grid item xs={12} sm={6} md={4} key={card.id}>
-            <Card 
+            <Card
               style={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -104,7 +112,7 @@ const HomePage = () => {
                 height: '200px',
                 width: '250px',
                 cursor: 'pointer',
-              }} 
+              }}
               onClick={() => handleCardClick(card.id)}  // Navigate to the folder page on click
             >
               <CardContent style={{

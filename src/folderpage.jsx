@@ -1,71 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Grid, Card, CardContent, Typography, Button, TextField } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';  // To generate unique card IDs
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom'; // Import Link for navigation
+import { db } from '../firebase'; // Import Firestore from your firebase config
+import { collection, getDocs, addDoc, doc, deleteDoc } from 'firebase/firestore'; // Firestore methods
+import { UserContext } from './UserContext';  
 
-
-const folderpage = () => {
+const FolderPage = () => {
+  const { user } = useContext(UserContext); // Get user from context
   const [cards, setCards] = useState([]); // User's card collection state
   const [cardName, setCardName] = useState(''); // Input for card name
   const [cardRarity, setCardRarity] = useState(''); // Input for card rarity
   const [cardImage, setCardImage] = useState(''); // Input for card image URL
-  const { id } = useParams();//id from url
+  const { id: folderId } = useParams(); // Folder id from URL
+   const [loading, setLoading] = useState(true); 
+  const userId = user ? user.uid : null; // Use userId if user exists
+
+  // Fetch cards from Firestore based on userId and folderId
+  useEffect(() => {
+    if (!userId) return; // If userId is not available, don't try fetching cards
+
+    const fetchCards = async () => {
+      try {
+        const cardsCollection = collection(db, `users/${userId}/folders/${folderId}/cards`);
+        const cardSnapshot = await getDocs(cardsCollection);
+        const cardList = cardSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setCards(cardList); // Set the fetched cards to state
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching cards: ", error);
+      }
+    };
+
+    fetchCards();
+  }, [folderId, userId]); // Re-fetch when folderId or userId changes
+
   // Handle adding a new card to the collection
-  const addCard = () => {
+  const addCard = async () => {
     if (cardName && cardRarity && cardImage) {
-      setCards([
-        ...cards,
-        {
-          id: uuidv4(),
+      try {
+        const newCard = {
           name: cardName,
           rarity: cardRarity,
-          image: cardImage,
-        },
-      ]);
-      // Reset input fields
-      setCardName('');
-      setCardRarity('');
-      setCardImage('');
+          image: cardImage
+        };
+        const cardsCollection = collection(db, `users/${userId}/folders/${folderId}/cards`);
+        const docRef = await addDoc(cardsCollection, newCard);
+        setCards([ ...cards, { id: docRef.id, ...newCard } ]);
+        // Reset input fields
+        setCardName('');
+        setCardRarity('');
+        setCardImage('');
+      } catch (error) {
+        console.error("Error adding card: ", error);
+      }
     }
   };
 
   // Handle removing a card from the collection
-  const removeCard = (id) => {
-    setCards(cards.filter((card) => card.id !== id));
+  const removeCard = async (id) => {
+    try {
+      const cardDoc = doc(db, `users/${userId}/folders/${folderId}/cards`, id);
+      await deleteDoc(cardDoc);
+      setCards(cards.filter((card) => card.id !== id));
+    } catch (error) {
+      console.error("Error removing card: ", error);
+    }
   };
 
+  if (!userId) {
+    return <div>Please log in to see your collection</div>; // Show message if not logged in
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+
   return (
+    
     <div style={{ padding: '20px' }}>
+      
       <Typography variant="h3" gutterBottom>
         My TCG Card Collection
       </Typography>
-
-      <div style={{ marginBottom: '20px' }}>
-        <TextField
-          label="Card Name"
-          variant="outlined"
-          value={cardName}
-          onChange={(e) => setCardName(e.target.value)}
-          style={{ marginRight: '10px' }}
-        />
-        <TextField
-          label="Card Rarity"
-          variant="outlined"
-          value={cardRarity}
-          onChange={(e) => setCardRarity(e.target.value)}
-          style={{ marginRight: '10px' }}
-        />
-        <TextField
-          label="Card Image URL"
-          variant="outlined"
-          value={cardImage}
-          onChange={(e) => setCardImage(e.target.value)}
-          style={{ marginRight: '10px' }}
-        />
-        <Button variant="contained" color="primary" onClick={addCard}>
-          Add Card
-        </Button>
-      </div>
 
       <Grid container spacing={2}>
         {/* Map over the cards array and render each card */}
@@ -107,8 +127,17 @@ const folderpage = () => {
           </Grid>
         ))}
       </Grid>
+
+      {/* Button linking to the market page with the id passed as part of the URL */}
+      <div style={{ marginTop: '20px' }}>
+        <Link to={`/market/${folderId}`}>
+          <Button variant="contained" color="primary">
+            Go to Market
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 };
 
-export default folderpage;
+export default FolderPage;
