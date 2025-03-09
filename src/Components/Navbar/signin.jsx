@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, provider } from '../../../firebase';  // Make sure to import your firebase config
 import { signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
+import './signin.css';
 
 function Signin() {
   const [user, setUser] = useState(null);
@@ -34,7 +35,7 @@ function Signin() {
   };
 
   return (
-    <div>
+    <div className="signin-container">
       <h1>Signin Page</h1>
       {user ? (
         <div>
@@ -43,7 +44,7 @@ function Signin() {
         </div>
       ) : (
         <div>
-          <p>Please log in to continue.</p>
+          <h2>Please log in to continue.</h2>
           <button onClick={handleLogin}>Login with Google</button>
         </div>
       )}
