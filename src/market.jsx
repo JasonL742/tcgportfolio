@@ -7,7 +7,7 @@ import './market.css';
 import { UserContext } from './UserContext';
 
 const API_URL = "https://api.pokemontcg.io/v2/cards";
-const API_KEY = "72283e5f-3b89-4b20-8ddf-8ab81b2a01d4"; // Replace with your actual API key
+const API_KEY = import.meta.env.VITE_Poke_Key; // Replace with your actual API key
 
 const Market = () => {
   const [cards, setCards] = useState([]);
