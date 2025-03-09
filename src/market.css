@@ -1,9 +1,10 @@
 .market-container{
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: right;
   text-align: center;
-  padding: 20px;
+  
+
 }
 
 /* Style for the search bar */
@@ -13,6 +14,7 @@
   border: 2px solid #ffcb05;
   border-radius: 5px;
   font-size: 16px;
+  align-self: center;
 }
 
 .market-body button {
@@ -23,6 +25,7 @@
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
+  align-self: center;
 }
 
 .market-body button:hover {
@@ -36,7 +39,9 @@
   gap: 20px;
   justify-content: center;
   margin-top: 20px;
-  width: 80%;
+  width: 100%;
+  padding-left: 200px;
+  padding-right: 200px;
 }
 
 /* 🎴 Individual Card */

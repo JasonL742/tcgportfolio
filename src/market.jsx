@@ -52,6 +52,7 @@ const Market = () => {
   return (
     <div className="market-container">
       <div className="market-body">
+        <div className='searchbar'>
         <h1>Pokémon TCG Market</h1>
 
         {/* 🔍 Search Bar */}
@@ -70,7 +71,7 @@ const Market = () => {
           />
           <button onClick={() => fetchCards(query, cardNumber)}>Search</button>
         </div>
-
+      </div>
         {loading && <p>Loading cards...</p>}
         {error && <p>{error}</p>}
 
