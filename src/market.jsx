@@ -15,28 +15,29 @@ const Market = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("pikachu");
+  const [size, setSize] = useState("10");
   const [cardNumber, setCardNumber] = useState(""); // For optional card number
   const [image, setImage] = useState(null); // For storing selected image
   const { id } = useParams(); // Get the folder ID from the URL
   const { user } = useContext(UserContext); 
   const userId = user ? user.uid : null;
 
-  const fetchCards = async (searchTerm, cardNumber = "") => {
+  const fetchCards = async (searchTerm, cardNumber,size) => {
     setLoading(true);
     setError("");
 
     // Build the query for a broad name search
-    let query = `name:${searchTerm}`;
+    let query = `name:${searchTerm.replace(/ /g,"*")+"*"}`;
 
     if (cardNumber) {
       // Only append the number if it's provided (exact match)
-      query += ` number:${cardNumber}`;
+      query += ` number:${cardNumber+"*"}`;
     }
 
     try {
       const response = await axios.get(API_URL, {
         headers: { "X-Api-Key": API_KEY },
-        params: { q: query, pageSize: 10 },
+        params: { q: query, pageSize: size },
       });
 
       if (response.data && response.data.data) {
@@ -56,8 +57,8 @@ const Market = () => {
 
   // Fetch cards on first load
   useEffect(() => {
-    fetchCards(query, cardNumber);
-  }, [query, cardNumber]);  // Re-fetch when query or cardNumber changes
+    fetchCards(query, cardNumber,size);
+  }, [query, cardNumber,size]);  // Re-fetch when query or cardNumber changes
 
   // Function to add a card to the folder
   const addCardToFolder = async (card) => {
@@ -130,7 +131,7 @@ const Market = () => {
             {
               role: "user",
               content: [
-                { type: "text", text: "return the name of the pokemon on top and the number on the bottom before the /. Don't say anything else except the name and number with a space in between" },
+                { type: "text", text: "detect what pokemon card this is and return the name of the pokemon on top and the number card it is before the /. Don't say anything else except the name and number with a - in between no spaces should be in your output except for multi word names, your output should be like Iron Valiant ex-249" },
                 {
                   type: "image_url",
                   image_url: {
@@ -152,7 +153,7 @@ const Market = () => {
   
       const description = response.data.choices[0]?.message.content;
       if (description) {
-        const [name, number] = description.split(" ");
+        const[name, number] = description.split("-");
         setQuery(name); // Set the name to the search query
         setCardNumber(number); // Set the number to the cardNumber state
         console.log("Image description extracted:", description);
@@ -185,7 +186,8 @@ const Market = () => {
               onChange={(e) => setCardNumber(e.target.value)}
               placeholder="Card number (optional)"
             />
-            <button onClick={() => fetchCards(query, cardNumber)}>Search</button>
+            <button onClick={() => setSize("20")}>20</button>
+            <button onClick={() => setSize("")}>All</button>
             <Link to={`/folderpage/${id}`}>
                     <button className="button">Done</button>
                   </Link>
