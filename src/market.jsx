@@ -16,13 +16,14 @@ const Market = () => {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("pikachu");
   const [size, setSize] = useState("10");
+  const [pageNum, setPage] = useState(1);
   const [cardNumber, setCardNumber] = useState(""); // For optional card number
   const [image, setImage] = useState(null); // For storing selected image
   const { id } = useParams(); // Get the folder ID from the URL
   const { user } = useContext(UserContext); 
   const userId = user ? user.uid : null;
 
-  const fetchCards = async (searchTerm, cardNumber,size) => {
+  const fetchCards = async (searchTerm, cardNumber,size,pageN) => {
     setLoading(true);
     setError("");
 
@@ -37,7 +38,7 @@ const Market = () => {
     try {
       const response = await axios.get(API_URL, {
         headers: { "X-Api-Key": API_KEY },
-        params: { q: query, pageSize: size },
+        params: { q: query, pageSize: size, page: pageN.toString() },
       });
 
       if (response.data && response.data.data) {
@@ -57,8 +58,8 @@ const Market = () => {
 
   // Fetch cards on first load
   useEffect(() => {
-    fetchCards(query, cardNumber,size);
-  }, [query, cardNumber,size]);  // Re-fetch when query or cardNumber changes
+    fetchCards(query, cardNumber,size,pageNum);
+  }, [query, cardNumber,size,pageNum]);  // Re-fetch when query or cardNumber changes
 
   // Function to add a card to the folder
   const addCardToFolder = async (card) => {
@@ -187,7 +188,9 @@ const Market = () => {
               placeholder="Card number (optional)"
             />
             <button onClick={() => setSize("20")}>20</button>
-            <button onClick={() => setSize("")}>All</button>
+            <button onClick={() => setSize("30")}>30</button>
+            <button onClick={() => setPage(pageNum+1)}>next</button>
+            <button onClick={() => setPage(pageNum-1)} disabled={pageNum === 1}>back</button>
             <Link to={`/folderpage/${id}`}>
                     <button className="button">Done</button>
                   </Link>
