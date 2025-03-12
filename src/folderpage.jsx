@@ -100,9 +100,9 @@ const FolderPage = () => {
             <div className="card-content">
               <h5>{card.name}</h5>
               <p>Rarity: {card.rarity}</p>
-              <p>Price: {cardPrices[card.id] || 'Loading price...'}</p>
+              <p>Current Price: {cardPrices[card.id] || 'Loading price...'}</p>
               <p>Price Added: {card.priceAdded}</p>
-              <p>Gain: {card.priceAdded - cardPrices[card.id]}</p>
+              <p>Gain: {cardPrices[card.id]-card.priceAdded}</p>
             </div>
             <button className="remove-button" onClick={() => removeCard(card.id)}>Remove</button>
           </div>
